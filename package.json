@@ -1,0 +1,14 @@
+{
+  "name": "mapsql",
+  "version": "1.0.0",
+  "description": "a SQL base map like storage for nodejs",
+  "main": "mapsql.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zombean",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^9.4.1"
+  }
+}
