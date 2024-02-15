@@ -14,9 +14,9 @@ This Node.js module exports a single function, `load(table_name)`, that provides
 
 ```javascript
 const myMap = load("1337");
-console.log("hello:", myMap.get("egg"));
+console.log("hello:", myMap.get("hello"));
 myMap.set("hello", "world");
-console.log("hello:", myMap.get("egg"));
+console.log("hello:", myMap.get("hello"));
 //hello: undefined
 //hello: world
 ```
