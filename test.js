@@ -1,4 +1,4 @@
-const { load } = require("./mapsql.js");
+const { load } = require("./mapsqlite.js");
 console.log("loading map 'test'");
 const map = load("test");
 console.log("assigning world to hello");
