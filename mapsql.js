@@ -1,4 +1,4 @@
-const db = require('better-sqlite3')('sqlmap.db', { verbose: console.log });
+const db = require('better-sqlite3')('sqlmap.db');
 
 function table_exists(table_name) {
   try {
@@ -36,12 +36,15 @@ function load(table_name) {
   if (!table_exists(table_name)) table_create(table_name);
 
   function get(key) {
+    if(typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
     const query = db.prepare(`SELECT value FROM ${table_name} WHERE id = ?`);
     const result = query.get(key);
     return result ? result.value : undefined;
   }
 
   function set(key, value) {
+    if(typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
+    if(typeof value !== "string") throw new Error(`value is ${typeof key}, expecting string`);
     const query = db.prepare(`SELECT EXISTS (SELECT 1 FROM ${table_name} WHERE id = ?)`).get(key);
     const exists = Object.values(query)[0] !== 0;
     if (exists) {

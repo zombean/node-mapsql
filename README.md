@@ -13,13 +13,10 @@ This Node.js module exports a single function, `load(table_name)`, that provides
 **Usage:**
 
 ```javascript
-const keyValueStorage = load("myTable");
-
-const value = keyValueStorage.get("myKey");
-if (value) {
-  console.log("Value:", value);
-} else {
-  console.log("Key not found.");
-}
-
-keyValueStorage.set("anotherKey", "new value");
+const myMap = load("1337");
+console.log("hello:", myMap.get("egg"));
+myMap.set("hello", "world");
+console.log("hello:", myMap.get("egg"));
+//hello: undefined
+//hello: world
+```
