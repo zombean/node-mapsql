@@ -13,6 +13,7 @@ This Node.js module exports a single function, `load(table_name)`, that provides
 **Usage:**
 
 ```javascript
+const { load } = require("mapsqlite");
 const myMap = load("1337");
 console.log("hello:", myMap.get("hello"));
 myMap.set("hello", "world");
