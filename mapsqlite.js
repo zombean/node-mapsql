@@ -1,5 +1,13 @@
 const db = require('better-sqlite3')('sqlmap.db');
 
+function log(...args) {
+}
+
+function verbose(func) {
+  if(typeof func === "function") log = func;
+  else throw new Error(`Expected function got ${typeof func} instead`);
+}
+
 function table_exists(table_name) {
   try {
     const query = db.prepare(`SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?);`);
@@ -13,7 +21,7 @@ function table_exists(table_name) {
 function table_create(table_name) {
 
   if (table_exists(table_name)) {
-    console.warn(`Table '${table_name}' already exists, skipping creation.`);
+    log(`Table '${table_name}' already exists, skipping creation.`);
     return;
   }
 
@@ -26,7 +34,7 @@ function table_create(table_name) {
 
   try {
     db.exec(createTableSql);
-    console.log(`Table '${table_name}' created successfully.`);
+    log(`Table '${table_name}' created successfully.`);
   } catch (error) {
     console.error(`Error creating table '${table_name}':`, error);
   }
@@ -63,4 +71,4 @@ process.on('exit', () => {
   }
 });
 
-module.exports = { load };
+module.exports = { load, verbose };
