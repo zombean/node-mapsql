@@ -1,4 +1,8 @@
-const db = require('better-sqlite3')('sqlmap.db');
+const db = require('better-sqlite3')('sqlmap.db', {verbose: sqlite3_log});
+
+function sqlite3_log(...args) {
+  log(...args);
+}
 
 function log(...args) {
 }
