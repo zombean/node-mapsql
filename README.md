@@ -12,6 +12,8 @@ This Node.js module exports a single function, `load(table_name)`, that provides
 
 **Usage:**
 
+`npm install mapsqlite`
+
 ```javascript
 const { load } = require("mapsqlite");
 const myMap = load("1337");
