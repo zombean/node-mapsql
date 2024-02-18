@@ -1,5 +1,41 @@
 const db = require('better-sqlite3')('sqlmap.db', {verbose: sqlite3_log});
 
+class SqlMap {
+  constructor(table_name) {
+    if (!table_exists(table_name)) table_create(table_name);
+
+    this.get_query = db.prepare(`SELECT value FROM ${table_name} WHERE id = ?`);
+    this.find_query = db.prepare(`SELECT id FROM ${table_name} WHERE value = ?`);
+    this.set_find = db.prepare(`SELECT EXISTS (SELECT 1 FROM ${table_name} WHERE id = ?)`);
+    this.update = db.prepare(`UPDATE ${table_name} SET value = ? WHERE id = ?`);
+    this.insert = db.prepare(`INSERT INTO ${table_name} (id, value) VALUES (?, ?)`);
+  }
+
+  get(key) {
+    if (typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
+    const result = this.get_query.get(key);
+    return result ? result.value : undefined;
+  }
+
+  find(value) {
+    if (typeof value !== "string") throw new Error(`value is ${typeof value}, expecting string`);
+    const rows = this.find_query.all(value);
+    return rows.map(row => row.id);
+  }
+
+  set(key, value) {
+    if (typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
+    if (typeof value !== "string") throw new Error(`value is ${typeof key}, expecting string`);
+
+    const exists = Object.values(this.set_find.get(key))[0] !== 0;
+    if (exists) {
+      this.update.run(value, key);
+    } else {
+      this.insert.run(key, value);
+    }
+  }
+}
+
 const table_exists_query = db.prepare(`SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?);`);
 
 function sqlite3_log(...args) {
@@ -46,41 +82,7 @@ function table_create(table_name) {
 }
 
 function load(table_name) {
-  if (!table_exists(table_name)) table_create(table_name);
-
-  const get_query = db.prepare(`SELECT value FROM ${table_name} WHERE id = ?`);
-
-  function get(key) {
-    if(typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
-    const result = get_query.get(key);
-    return result ? result.value : undefined;
-  }
-
-  const find_query = db.prepare(`SELECT id FROM ${table_name} WHERE value = ?`);
-
-  function find(value) {
-    if (typeof value !== "string") throw new Error(`value is ${typeof value}, expecting string`);
-    const rows = find_query.all(value);
-    return rows.map(row => row.id);
-  }
-
-  const set_find = db.prepare(`SELECT EXISTS (SELECT 1 FROM ${table_name} WHERE id = ?)`);
-  const update = db.prepare(`UPDATE ${table_name} SET value = ? WHERE id = ?`);
-  const insert = db.prepare(`INSERT INTO ${table_name} (id, value) VALUES (?, ?)`);
-
-  function set(key, value) {
-    if(typeof key !== "string") throw new Error(`key is ${typeof key}, expecting string`);
-    if(typeof value !== "string") throw new Error(`value is ${typeof key}, expecting string`);
-    
-    const exists = Object.values(set_find.get(key))[0] !== 0;
-    if (exists) {
-      update.run(value, key);
-    } else {
-      insert.run(key, value);
-    }
-  }
-
-  return { get, set, find };
+  return new SqlMap(table_name);
 }
 
 process.on('exit', () => {
