@@ -1,6 +1,6 @@
 {
   "name": "mapsqlite",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "a SQL base map like storage for nodejs",
   "main": "mapsqlite.js",
   "scripts": {
